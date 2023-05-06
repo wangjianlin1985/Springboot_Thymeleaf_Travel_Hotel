@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>资料修改</title>
+    <!--用百度的静态资源库的cdn安装bootstrap环境-->
+    <!-- Bootstrap 核心 CSS 文件 -->
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!--font-awesome 核心我CSS 文件-->
+    <link href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 在bootstrap.min.js 之前引入 -->
+    <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+    <!-- Bootstrap 核心 JavaScript 文件 -->
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!--jquery.validate-->
+
+</head>
+<body>
+<div>
+    <h5 style="float: left">修改资料></h5>
+</div>
+<div class="container">
+    <div class="form">
+
+        <div>
+            <form class="" id="login_form">
+
+                <div class="col-sm-9 col-md-9" style="margin:-30px 0 0 0">
+                    <h2></h2>
+                    <div class="form-group">
+                        <i class="fa fa-user fa-lg"></i>
+                        <input class="form-control required" th:value="${user.name}" type="text" placeholder="Username" id="user" name="username" autofocus="autofocus" maxlength="20"/>
+                    </div>
+                    <div class="form-group">
+                        <i class="fa fa-user fa-lg"></i>
+                        <input class="form-control required" th:value="${user.sex}" type="text" id="sex" placeholder="Sex" name="username" autofocus="autofocus"/>
+                    </div>
+                    <div class="form-group">
+                        <i class="fa fa-user fa-lg"></i>
+                        <input class="form-control required" th:value="${user.age}" type="text" id="age" placeholder="Age" name="age"/>
+                    </div>
+                    <div class="form-group">
+                        <i class="fa fa-phone fa-lg"></i>
+                        <input class="form-control required" th:value="${user.mobile}" type="text" id="phone" placeholder="Phone" name="age"/>
+                    </div>
+                    <div class="form-group">
+                        <i class="fa fa-envelope fa-lg"></i>
+                        <input class="form-control eamil" th:value="${user.email}" type="text" id="email" placeholder="Email" name="email"/>
+                    </div>
+
+                    <br>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-success btn-xm btn-block" id="change" value="修改"/>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(function () {
+        $("#change").click(function () {
+            var name=$("#user").val()
+            var sex=$("#sex").val()
+            var age=$("#age").val()
+            var mobile=$("#phone").val()
+            var email=$("#email").val()
+            var data = JSON.stringify({name:name,sex:sex,age:age,mobile:mobile,email:email})
+            $.ajax({
+                    type: "post",
+                    url: "/user/change",
+                    data: data,
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"JSON",
+                    success:function(result){
+                        alert("修改成功")
+                        if (result.code==0){
+
+                            window.location.href="/dist/view"
+                        }
+                    },
+                    error:function () {
+                        alert('修改失败！');
+                    }
+            })
+
+        })
+    })
+
+
+</script>
+</body>
+</html>

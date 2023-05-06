@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>旅行相册</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Your description"/>
+    <meta name="keywords" content="Your keywords"/>
+    <meta name="author" content="Your name"/>
+
+    <link href="css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet">
+    <link href="css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet">
+    <link href="css/touchTouch.css" th:href="@{/css/touchTouch.css}" rel="stylesheet">
+    <link href="css/isotope.css" th:href="@{/css/isotope.css}" rel="stylesheet">
+    <link href="css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet">
+    <link href="css/select2.css" th:href="@{/css/select2.css}" rel="stylesheet">
+    <link href="css/smoothness/jquery-ui-1.10.0.custom.css" th:href="@{/css/smoothness/jquery-ui-1.10.0.custom.css}"
+          rel="stylesheet">
+    <link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet">
+
+    <script src="js/jquery.js" th:href="@{/js/jquery.js}"></script>
+    <script src="js/jquery-ui.js" th:href="@{/js/jquery-ui.js}"></script>
+    <script src="js/jquery-migrate-1.2.1.min.js" th:href="@{/js/jquery-migrate-1.2.1.min.js}"></script>
+    <script src="js/jquery.easing.1.3.js" th:href="@{/js/jquery.easing.1.3.js}"></script>
+    <script src="js/superfish.js" th:href="@{/js/superfish.js}"></script>
+
+    <script src="js/select2.js" th:href="@{/js/select2.js}"></script>
+
+    <script src="js/jquery.parallax-1.1.3.resize.js" th:href="@{/js/jquery.parallax-1.1.3.resize.js}"></script>
+
+    <script src="js/SmoothScroll.js" th:href="@{/js/SmoothScroll.js}"></script>
+
+    <script src="js/jquery.appear.js" th:href="@{/js/jquery.appear.js}"></script>
+
+    <script src="js/jquery.caroufredsel.js" th:href="@{/js/jquery.caroufredsel.js}"></script>
+    <script src="js/jquery.touchSwipe.min.js" th:href="@{/js/jquery.touchSwipe.min.js}"></script>
+
+    <script src="js/jquery.ui.totop.js" th:href="@{/js/jquery.ui.totop.js}"></script>
+
+    <script src="js/touchTouch.jquery.js" th:href="@{/js/touchTouch.jquery.js}"></script>
+    <script src="js/isotope.pkgd.min.js" th:href="@{/js/isotope.pkgd.min.js}"></script>
+    <script src="js/imagesloaded.pkgd.js" th:href="@{/js/imagesloaded.pkgd.js}"></script>
+
+    <script src="js/script.js" th:href="@{/js/script.js}"></script>
+</head>
+<body>
+<!-- head 头部 -->
+<div id="head" th:include="common/index_header :: copyheader"></div>
+
+<div id="parallax2" class="parallax">
+    <div class="bg2 parallax-bg"></div>
+    <div class="overlay"></div>
+    <div class="parallax-content">
+        <div class="container">
+        </div>
+    </div>
+</div>
+
+<div class="breadcrumbs1_wrapper">
+    <div class="container">
+        <div class="breadcrumbs1"><a href="view">首页</a><span>/</span>旅行相册</div>
+    </div>
+</div>
+
+<div id="content">
+    <div class="container">
+
+        <!--<div id="options" class="clearfix">-->
+            <!--<ul id="filters" class="pagination option-set clearfix" data-option-key="filter">-->
+                <!--&lt;!&ndash;<li><a href="#filter" data-option-value="*" class="selected">All</a></li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li><a href="#filter" data-option-value=".isotope-filter1">tours</a></li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li><a href="#filter" data-option-value=".isotope-filter2">cruises</a></li>&ndash;&gt;-->
+                <!--&lt;!&ndash;<li><a href="#filter" data-option-value=".isotope-filter3">hotels</a></li>&ndash;&gt;-->
+            <!--</ul>-->
+        <!--</div>-->
+        <div class="isotope-box">
+            <div id="container" class="clearfix" th:each="gallery : ${gallerys}">
+                <ul class="thumbnails clearfix" id="isotope-items">
+                    <li class="element isotope-filter2 col-sm-12 col-xs-12">
+                        <div class="thumb-isotope">
+                            <div class="thumbnail clearfix" >
+                                <a th:href="@{${gallery.img}}" rel="prettyPhoto[mix]"
+                                   title="Photo">
+                                    <figure>
+                                        <img th:src="@{${gallery.img}}">
+                                    </figure>
+                                    <div class="caption">
+                                        <div class="txt1" th:text="${gallery.title}"></div>
+                                        <div class="txt2" th:text="${gallery.comment}"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="common/index_footer :: copyfooter"></div>
+</body>
+</html>

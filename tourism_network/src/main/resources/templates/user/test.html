@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>五星好评</title>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="../../static/js2/jquery.min.js"></script>
+
+</head>
+<!--设置样式-->
+<style>
+    ul{
+        list-style-type: none;
+    }
+    li{
+        float: left;
+        margin-left: 15px;
+        font-size: 5px;
+        font-family: "simsun";
+        cursor: pointer;
+    }
+    div{
+        clear: both;
+    }
+    button{
+        margin-left: 70px;
+        font-size:30px;
+    }
+</style>
+<!--JS代码-->
+<script>
+    //    入口函数
+    $(function(){
+//        设置两个状态的星星
+        var emptyStar="☆";
+        var fullStar="★";
+//        li鼠标移入事件
+        $("li").mouseenter(function(){
+            $(this).text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+        });
+//        li鼠标离开事件
+        $("li").mouseleave(function(){
+            $("li").text(emptyStar);
+            $("li.current").text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+
+        });
+//        li点击事件
+        $("li").click(function(){
+            if($(this).hasClass("current")){
+                $(this).removeAttr("class");
+            }else{
+                $(this).attr("class","current").siblings().removeAttr("class");
+            }
+        })
+//        button点击事件
+        $("button").click(function(){
+            var boo=false;
+            for(var i=0;i<$("ul>li").length;i++){
+                if($("ul>li").hasClass("current")){
+                    boo=true;
+                }
+            }
+            if(boo){
+                console.log("分数："+($("ul>li.current").index()+1)+"分");
+            }else{
+                return alert("您还没有选择呢！");
+            }
+        })
+    })
+</script>
+<body>
+<ul class="box">
+    <li>☆</li>
+    <li>☆</li>
+    <li>☆</li>
+    <li>☆</li>
+    <li>☆</li>
+</ul>
+<div>
+    <button>提交</button>
+</div>
+</body>
+</html>

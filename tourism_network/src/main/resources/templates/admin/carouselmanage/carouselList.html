@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>轮播列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}"  media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <button id="add" class="layui-btn layui-btn-normal">
+                        添加轮播
+                    </button>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test-table-reload" lay-filter="test-table-reload"></table>
+                    <script type="text/html" id="barlist">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹出层内容-->
+<div class="layui-row" id="test" style="display: none;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!--<div class="layui-card-header">添加轮播</div>-->
+                <div class="layui-card-body" pad15>
+
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">内容一：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入内容一" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">内容二：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="comment" lay-verify="required" placeholder="请输入内容二" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">内容三：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="scenictime" lay-verify="required" placeholder="请输入内容三" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="setmyinfo">确认添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+<script>
+    layui.use(['table','layer','form'], function(){
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        //方法级渲染
+        table.render({
+            elem: '#test-table-reload'
+            ,url: 'http://localhost:8080/carousel'
+            ,cols: [
+                [
+                    {checkbox: true, fixed: true}
+                    ,{field:'title', title: '第一行内容', width:354, align:'center', edit: 'text'}
+                    ,{field:'comment', title: '第二行内容', width:354, align:'center', edit: 'text'}
+                    ,{field:'scenictime', title: '第三行内容', width:354, align:'center',edit: 'text'}
+                    ,{width:136, title:'操作', align:'center', toolbar: '#barlist'}
+                ]
+            ]
+            ,page: true
+            ,height: 470
+        });
+
+        //监听工具条
+        table.on('tool(test-table-reload)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/carousel/"+ data.id ,
+                        data: {"id": data.id},
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        success: function(result) {
+                            if(result.code == 0) {
+                                layer.msg(result.message,{icon: 1});
+                            } else {
+                                layer.msg(result.message, {
+                                    icon: 5
+                                });
+                            }
+                        }
+                    });
+                });
+            } else if(obj.event === 'edit'){
+            //    layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                layer.confirm('<div class="layui-form-item">\n' +
+                    '    <label class="layui-form-label">title</label>\n' +
+                    '    <div class="layui-input-block">\n' +
+                    '      <input type="text" name="title" id="title" required  lay-verify="required" value="'+data.title+'" placeholder="请输入" autocomplete="off" class="layui-input">\n' +
+                    '    </div>\n' +
+                    '  </div>'+
+                    '<div class="layui-form-item">\n' +
+                    '    <label class="layui-form-label">comment</label>\n' +
+                    '    <div class="layui-input-block">\n' +
+                    '      <input type="text" name="comment" id="comment" required  lay-verify="required" value="'+data.comment+'" placeholder="请输入" autocomplete="off" class="layui-input">\n' +
+                    '    </div>\n' +
+                    '  </div>'+
+                    '<div class="layui-form-item">\n' +
+                    '    <label class="layui-form-label">scenictime</label>\n' +
+                    '    <div class="layui-input-block">\n' +
+                    '      <input type="text" name="scenictime" id="scenictime" required  lay-verify="required" value="'+data.scenictime+'" placeholder="请输入" autocomplete="off" class="layui-input">\n' +
+                    '    </div>\n' +
+                    '  </div>',{btn:['确定','取消']},function () {
+                    var title=$("#title").val()
+                    var comment=$("#comment").val()
+                    var scenictime=$("#scenictime").val()
+                    console.log("====--==="+title+'\n'+comment+'\n'+scenictime+'\n')
+                    $.ajax({
+                        type: "PUT",
+                        url: "/carousel/"+ data.id ,
+                        data: JSON.stringify({"title":title,"comment":comment,"scenictime":scenictime}),
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        success: function(result) {
+                            if(result.code == 0) {
+                                layer.msg(result.message,{icon: 1});
+                            } else {
+                                layer.msg(result.message, {
+                                    icon: 5
+                                });
+                            }
+                        }
+                    });
+                })
+            }else if(obj.event === 'setSign'){
+                layer.prompt({
+                    formType: 2
+                    ,title: '修改 ID 为 ['+ data.id +'] 的房间描述'
+                    ,value: data.sign
+                }, function(value, index){
+                    layer.close(index);
+
+                    //这里一般是发送修改的Ajax请求
+
+                    //同步更新表格和缓存对应的值
+                    obj.update({
+                        sign: value
+                    });
+                });
+            }
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                var demoReload = $('#test-table-demoReload');
+
+                //执行重载
+                table.reload('test-table-reload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        key: {
+                            id: demoReload.val()
+                        }
+                    }
+                });
+            }
+        };
+
+        $('.test-table-reload-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        $("#add").click(function() {
+
+            /* 再弹出添加界面 */
+            layer.open({
+                type: 1,
+                title: "添加轮播信息",
+                skin: "myclass",
+                area: ["50%"],
+                content: $("#test").html()
+            });
+
+            //监听提交
+            form.on('submit(setmyinfo)', function(obj){
+                $.ajax({
+                    type: "POST",
+                    url: "/carousel",
+                    data: JSON.stringify(obj.field),
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function(result) {
+                        if(result.code == 0) {
+                            //登入成功的提示
+
+                            layer.msg(
+                                result.message,{
+                                    icon: 1
+                                });
+                        } else {
+                            layer.msg(result.message, {
+                                icon: 5
+                            });
+                        }
+                    }
+
+                });
+                 //关闭弹出层
+                layer.closeAll();
+            });
+
+
+        });
+    });
+</script>
+</body>
+</html>

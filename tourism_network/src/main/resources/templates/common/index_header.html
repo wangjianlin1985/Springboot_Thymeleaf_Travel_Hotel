@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>行影旅游网</title>
+    <style type="text/css">
+         body {
+               background-size: cover;
+               font-size: 16px;
+         }
+
+        .form {
+            background: rgb(202, 30, 55);
+            width: 400px;
+            margin: 100px auto;
+        }
+
+        #login_form {
+            display: block;
+        }
+
+        #register_form {
+            display: none;
+        }
+
+        .fa {
+            display: inline-block;
+            top: 27px;
+            left: 6px;
+            position: relative;
+            color: #ccc;
+        }
+
+        input[type="text"], input[type="password"] {
+            padding-left: 26px;
+        }
+
+
+        .checkbox {
+            padding-left: 21px;
+        }
+        .form-group {
+            margin-top: -15px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+<header th:fragment="copyheader">
+    <link href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+    <link href="/css/font-awesome.css" th:href="@{/css/font-awesome.css}" rel="stylesheet"/>
+    <link href="/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link href="/css/select2.css" th:href="@{/css/select2.css}" rel="stylesheet"/>
+    <link href="/css/smoothness/jquery-ui-1.10.0.custom.css" th:href="@{/css/smoothness/jquery-ui-1.10.0.custom.css}" rel="stylesheet"/>
+    <link href="/css/style.css" th:href="@{/css/style.css}" rel="stylesheet"/>
+
+    <script src="/js/jquery.js" th:src="@{/js/jquery.js}"></script>
+    <script src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+
+    <script src="/js/jquery-ui.js" th:src="@{/js/jquery-ui.js}"></script>
+    <script src="/js/jquery-migrate-1.2.1.min.js" th:src="@{/js/jquery-migrate-1.2.1.min.js}"></script>
+    <script src="/js/jquery.easing.1.3.js" th:src="@{/js/jquery.easing.1.3.js}"></script>
+    <script src="/js/superfish.js" th:src="@{/js/superfish.js}"></script>
+
+    <script src="/js/select2.js" th:src="@{/js/select2.js}"></script>
+    <script src="/js/jquery.parallax-1.1.3.resize.js" th:src="@{/js/jquery.parallax-1.1.3.resize.js}"></script>
+    <script src="/js/SmoothScroll.js" th:src="@{/js/SmoothScroll.js}"></script>
+    <script src="/js/jquery.appear.js" th:src="@{/js/jquery.appear.js}"></script>
+    <script src="/js/jquery.caroufredsel.js" th:src="@{/js/jquery.caroufredsel.js}"></script>
+    <script src="/js/jquery.touchSwipe.min.js" th:src="@{/js/jquery.touchSwipe.min.js}"></script>
+    <script src="/js/jquery.ui.totop.js" th:src="@{/js/jquery.ui.totop.js}"></script>
+    <script src="/js/script.js" th:src="@{/js/script.js}"></script>
+
+
+    <div class="top1_wrapper">
+        <div class="container">
+            <div class="top1 clearfix">
+                <div class="email1"><a href="#">travel@xingying.com</a></div>
+                <div class="phone1">+917 3386831</div>
+                <div class="social_wrapper">
+                    <ul class="social clearfix" th:if="${session.user==null}">
+                        <li>  <a href="/dist/login" class="btn-default btn2" id="login">登录</a> </li>
+                        <li>  <a href="/dist/register" class="btn-default btn2" id="regist">注册</a> </li>
+                    </ul>
+                    <ul class="social clearfix" th:if="${session.user!=null}">
+                        <li>
+                            <label>欢迎你：</label>
+                        <span  ><a style="color: #f92c17;float: right;size: 2px" href="#" onclick="userInfo()" th:text="${session.user.getName()}"></a></span>
+                        </li>
+                        <li>
+                            <a href="#" class="btn-default btn2" onclick="showModal();">我的订单</a>
+                        </li>
+                        <li>
+                            <a href="../user/logout" class="btn-default btn2">注销</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="top2_wrapper">
+        <div class="container">
+            <div class="top2 clearfix">
+                <header>
+                    <div class="logo_wrapper">
+                        <a href="/dist/view" class="logo">
+                            <img th:src="@{/images/logo.png}" class="img-responsive">
+                        </a>
+                    </div>
+                </header>
+                <div class="navbar navbar_ navbar-default">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="navbar-collapse navbar-collapse_ collapse">
+                        <ul class="nav navbar-nav sf-menu clearfix">
+                            <li><a href="/dist/view">首页</a></li>
+                            <li><a href="/dist/travel">行影旅行</a></li>
+                            <li><a href="/dist/gallery">旅行相册</a></li>
+                            <li><a href="/dist/hotels">酒店住宿</a>
+                            <li><a href="/dist/contacts">联系我们</a></li>
+                            <li><a href="/dist/about">关于我们</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--弹出框-->
+    <div class="modal fade" id="login_modal" th:fragment="table_refresh">
+        <div class="modal-dialog">
+            <div class="modal-content message_align">
+                <form id="dologin" name="uploadForm" method="POST" class="form-horizontal" action="../desktop/login" role="form">
+                    <div class="modal-header">
+                       <span class="btn"></span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()"><span aria-hidden="true" >×</span></button>
+                        <h4 class="modal-title">我的订单</h4>
+                        <ul id="myTab" class="nav nav-tabs" role="tablist">
+                            <li class="active"><a href="#" id="scenic" onclick="scenic()" role="tab" data-toggle="tab">景点</a></li>
+                            <li><a href="#" role="tab" id="hotel" onclick="hotel()" data-toggle="tab">酒店</a></li>
+                        </ul>
+                    </div>
+                    <div class="modal-body">
+                        <div class="thumbnail clearfix">
+                            <div class="modal-body">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group" >
+                                                <table class="table" id="table">
+
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" onclick="closeModal()">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal111" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel2">请给我们的服务打分：</h4>
+                </div>
+                <div><ul class="box" style=" list-style-type: none;">
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                </ul></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="submit" class="btn btn-primary">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <div class="modal fade" id="myModal11" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel3">请给我们的服务打分：</h4>
+                </div>
+                <div><ul class="box" style=" list-style-type: none;">
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                    <li style="float: left;font-size: 50px">☆</li>
+                </ul></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="submit1" class="btn btn-primary">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <!-- 弹框-编辑 -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h4 class="modal-title" id="myModalLabel">编辑</h4></div>
+                <div class="modal-body stu_modal">
+                    <div class="form-group"><label>姓名：</label><input type="text" class="form-control" id="stu_name"></div>
+                    <div class=""><label>性别：</label><input type="radio" name="sex" value="男" id="man">男<input type="radio" name="sex" value="女" id="woman">女</div><br>
+                    <div class="form-group"><label>年龄：</label><input type="text" onkeyup = "value=value.replace(/[^\d]/g,'')" class="form-control" id="stu_age" onchange="checkPhone(this)"></div>
+                    <div class="form-group"><label>电话：</label><input type="" class="form-control" id="stu_phone" onchange="checkPhone(this)"></div>
+                    <div class="form-group"><label>邮箱：</label><input type="email"  class="form-control" id="stu_email" onchange="checkEmail(this)" ></div>
+                    <div class="modal-footer"><button type="button" class="btn btn-save" data-dismiss="modal" onclick="change()">提交</button><button type="button" class="btn btn-theme-border" data-dismiss="modal">关闭</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+        function scenic() {
+            showModal();
+        }
+
+        function hotel() {
+            $.ajax({
+                type: "post",
+                url: "/orders/allorderhotel",
+                contentType: "application/json",
+                dataType:"JSON",
+                success:function(result){
+                    html="<thead>\n" +
+                        "<tr><th>名字</th><th>订单个数</th><th>总钱数</th><th>状态</th><th>付款时间</th><th>评价</th></tr>\n" +
+                        "</thead><tbody>"
+                    $.each(result,function (index,value) {
+                        var scenic=value.scenicid;
+                        if (value.status==1){
+                            value.status="已发票";
+                        }else {
+                            value.status="已下单"
+                        }
+                        html=html+"<tr><td>"+value.username+"</td><td>"+value.qty+"</td><td>"+value.payment+"</td><td>"+value.status+"</td><td>"+value.paytime+"</td><td><a href='#' onclick='star1(\""+scenic+"\")'>评价</a></td></tr>";
+                    })
+                    html=html+"</tbody>";
+                    $("#table").html(html)
+                    $("#login_modal").modal('show');
+                },
+                error:function () {
+                    alert('请求失败！');
+                }
+            })
+        }
+
+
+        function showModal() {
+            $.ajax({
+                type: "post",
+                url: "/orders/allorder",
+                contentType: "application/json",
+                dataType:"JSON",
+                success:function(result){
+                    html="<thead>\n" +
+                        "<tr><th>名字</th><th>订单个数</th><th>总钱数</th><th>状态</th><th>付款时间</th><th>评价</th></tr>\n" +
+                        "</thead><tbody>"
+                    $.each(result,function (index,value) {
+                        var scenic=value.scenicid;
+                        if (value.status==1){
+                            value.status="已发票";
+                        }else {
+                            value.status="已下单"
+                        }
+                       console.log(value.id+"==="+value.scenicid+"==="+value.qty+"==="+value.payment+"==="+value.status)
+                        html=html+"<tr><td>"+value.username+"</td><td>"+value.qty+"</td><td>"+value.payment+"</td><td>"+value.status+"</td><td>"+value.paytime+"</td><td><a href='#' onclick='star(\""+value.scenicid+"\")'>评价</a></td></tr>";
+                    })
+                    html=html+"</tbody>";
+                    $("#table").html(html)
+                    $("#login_modal").modal('show');
+                },
+                error:function () {
+                    alert('请求失败！');
+                }
+            })
+
+            //$('#table_refresh').load("/orders/allorders");
+
+        }
+
+        function closeModal() {
+            $("#login_modal").modal('hide');
+        }
+
+        function userInfo(){
+            inf()
+        }
+
+        function checkPhone(obj) {
+            var myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+            if (!myreg.test(obj.value)) {
+                alert("手机号码格式不正确！");
+                obj.value = '';
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkEmail(obj) {
+            var myreg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
+            if (!myreg.test(obj.value)) {
+                alert("邮箱格式不正确！");
+                obj.value = '';
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function inf() {
+            $.ajax({
+                type: "post",
+                url: "/dist/info",
+                contentType: "application/json",
+                dataType:"JSON",
+                success:function(result){
+                    $("#stu_name").val(result.name)
+                    if (result.sex=="男"){
+                        $("#man").attr("checked","checked")
+                    }else {
+                        $("#woman").attr("checked","checked")
+                    }
+                    $("#stu_age").val(result.age)
+                    $("#stu_email").val(result.email)
+                    $("#stu_phone").val(result.mobile)
+                    $("#editModal").modal('show');
+                },
+                error:function () {
+                    alert('请求失败！');
+                }
+            })
+        }
+        
+        
+        function change() {
+                var name=$("#stu_name").val()
+                var sex=$('input:radio[name="sex"]:checked').val();
+                var age=$("#stu_age").val()
+                var mobile=$("#stu_phone").val()
+                var email=$("#stu_email").val()
+                var data = JSON.stringify({name:name,sex:sex,age:age,mobile:mobile,email:email})
+                $.ajax({
+                    type: "post",
+                    url: "/user/change",
+                    data: data,
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"JSON",
+                    success:function(result){
+                        if (result.code==0){
+                            alert("修改成功")
+                        }else {
+                            alert("修改失败！")
+                        }
+                        $("#editModal").modal('hide');
+                    },
+                    error:function () {
+                        alert('修改失败！');
+                    }
+                })
+        }
+
+
+        function star(id) {
+            console.log(id+"=========")
+            $("#myModal111").modal('show');
+            opinions(id)
+        }
+
+        function star1(id) {
+            console.log(id+"=========")
+            $("#myModal11").modal('show');
+            opinions1(id)
+        }
+
+
+        function opinions1(id){
+            console.log("=-=-=-=-=-="+id)
+            //        设置两个状态的星星
+            var emptyStar="☆";
+            var fullStar="★";
+//        li鼠标移入事件
+            $("ul[class=box] li").mouseenter(function(){
+                $(this).text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+            });
+//        li鼠标离开事件
+            $("ul[class=box] li").mouseleave(function(){
+                $("ul[class=box] li").text(emptyStar);
+                $("ul[class=box] li.current").text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+
+            });
+//        li点击事件
+            $("ul[class=box] li").click(function(){
+                if($(this).hasClass("current")){
+                    $(this).removeAttr("class");
+                }else{
+                    $(this).attr("class","current").siblings().removeAttr("class");
+                }
+            })
+//        button点击事件
+            $("#submit1").click(function(){
+                var boo=false;
+                for(var i=0;i<$("ul>li").length;i++){
+                    if($("ul>li").hasClass("current")){
+                        boo=true;
+                    }
+                }
+                if(boo){
+                    var star=($("ul>li.current").index()+1)
+                    var data = JSON.stringify({id:id,start:star})
+                    $.ajax({
+                        contentType: "application/json; charset=utf-8",
+                        type:"POST",
+                        url:"/travel/hotel?id="+id+"&start="+star,
+                        data:data,
+                        dataType:"JSON",
+                        success:function (data) {
+                            if (data.code==1){
+                                alert("感谢评分！")
+                                $("#myModal11").modal('hide');
+                                window.location.reload()
+
+                            }
+                        },error:function () {
+                            alert("失败！")
+                        }
+                    })
+                }else{
+                    return alert("您还没有选择呢！");
+                }
+            })
+
+        }
+
+        function opinions(id){
+
+
+            //        设置两个状态的星星
+            var emptyStar="☆";
+            var fullStar="★";
+//        li鼠标移入事件
+            $("ul[class=box] li").mouseenter(function(){
+                $(this).text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+            });
+//        li鼠标离开事件
+            $("ul[class=box] li").mouseleave(function(){
+                $("ul[class=box] li").text(emptyStar);
+                $("ul[class=box] li.current").text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+
+            });
+//        li点击事件
+            $("ul[class=box] li").click(function(){
+                if($(this).hasClass("current")){
+                    $(this).removeAttr("class");
+                }else{
+                    $(this).attr("class","current").siblings().removeAttr("class");
+                }
+            })
+//        button点击事件
+            $("#submit").click(function(){
+                var boo=false;
+                for(var i=0;i<$("ul>li").length;i++){
+                    if($("ul>li").hasClass("current")){
+                        boo=true;
+                    }
+                }
+                if(boo){
+                    var star=($("ul>li.current").index()+1)
+                    var data = JSON.stringify({id:id,start:star})
+                    $.ajax({
+                        contentType: "application/json; charset=utf-8",
+                        type:"POST",
+                        url:"/travel/star?id="+id+"&start="+star,
+                        data:data,
+                        dataType:"JSON",
+                        success:function (data) {
+                            if (data.code==1){
+                                alert("感谢评分！")
+                                $("#myModal111").modal('hide');
+                                window.location.reload()
+
+                            }
+                        },error:function () {
+                            alert("失败！")
+                        }
+                    })
+                }else{
+                    return alert("您还没有选择呢！");
+                }
+            })
+
+        }
+
+
+    </script>
+</header>
+
+</body>
+</html>

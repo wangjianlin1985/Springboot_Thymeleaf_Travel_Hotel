@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>爱南阳 - 个人中心</title>
+    <link rel="shortcut icon" href="../images/ainanyang.jpg" type="image/x-icon">
+    <!--Layui-->
+    <link href="../plug/layui/css/layui.css" rel="stylesheet" />
+    <!--font-awesome-->
+    <link href="../plug/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <!--全局样式表-->
+    <link href="../css/global.css" rel="stylesheet" />
+    <!-- 本页样式表 -->
+    <link href="../css/user.css" rel="stylesheet" />
+</head>
+<body>
+
+
+<div class="box">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>密码修改</legend>
+    </fieldset>
+
+    <div class="layui-tab-item layui-show">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">旧密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="oldpassword" name="oldpassword" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">旧密码</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="password" name="password" lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">新密码</div>
+
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码确认</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="passwordcheck" name="passwordcheck" lay-verify="required"  autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">新密码确认</div>
+
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn" onclick="update()">确认</button>
+            </div>
+        </div>
+        <div id="demo0" class="fenye"></div>
+    </div>
+</div>
+<!-- 引入公共底部 -->
+<div class="footer"></div>
+<!--遮罩-->
+<div class="blog-mask animated layui-hide"></div>
+<!-- layui.js -->
+<script src="../plug/layui/layui.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script>
+
+    function update() {
+        var oldpassword  = $("#oldpassword").val();
+        var password = $("#password").val();
+        var passwordcheck= $("#passwordcheck").val()
+        console.log(passwordcheck+'\n'+password)
+        if (password!=passwordcheck){
+            alert("两次新密码不一样！")
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/user/update",
+                data: {oldpassword:oldpassword,password:password},
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.code == 0){
+                        alert("修改成功！");
+                        window.location.reload()
+                        //top.location.href="/user_index/";
+                    }else if (data.code==1) {
+                        alert("原始密码错误！");
+                    }
+
+                }
+            });
+        }
+
+    }
+    function check() {
+        var username = $("#nickName").val();
+        var name = $("#name").val();
+        var phone = $("#phone").val();
+        var passwd = $("#passwd").val();
+        var repasswd = $("#repasswd").val();
+        if (username == ""||name==""||phone==""||passwd==""||repasswd==""){
+            alert("信息不能为空!");
+            return false;
+        }
+        if (passwd!=repasswd){
+            alert("密码不一致!");
+            return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

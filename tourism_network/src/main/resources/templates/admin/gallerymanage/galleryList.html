@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>相册列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/css/public.css}" media="all">
+</head>
+<body>
+<form class="layui-form">
+    <blockquote class="layui-elem-quote news_search">
+        <div class="layui-inline">
+            <input type="checkbox" name="selectAll" id="selectAll" lay-filter="selectAll" lay-skin="primary" title="全选">
+        </div>
+        <div class="layui-inline">
+            <a class="layui-btn layui-btn-sm layui-btn-danger batchDel">批量删除</a>
+        </div>
+        <!--<div class="layui-inline">-->
+            <!--<a class="layui-btn layui-btn-sm" href="galleryAdd">上传新图片</a>-->
+        <!--</div>-->
+    </blockquote>
+    <ul class="img-responsive2" id="Images"></ul>
+</form>
+
+<script th:src="@{/layuiadmin/layui/layui.js}" src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: "../../js/"
+    }).use(['flow', 'form', 'layer'], function () {
+        var flow = layui.flow,
+            form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
+
+//流加载图片
+        var imgNums = 15;  //单页显示图片数量
+        flow.load({
+            elem: '#Images', //流加载容器
+            done: function (page, next) { //加载下一页
+                $.get("http://localhost:8080/gallery", function (res) {
+                    var imgList = [], data = res.data;
+                    var maxPage = imgNums * page < data.length ? imgNums * page : data.length;
+                    setTimeout(function () {
+                        for (var i = imgNums * (page - 1); i < maxPage; i++) {
+                            imgList.push(
+                                '<li>' +
+                                '<img src="' + data[i].img + '" alt="' + data[i].title + '">' +
+                                '<div class="operate"><div class="check">' +
+                                '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="' + data[i].title + '">' +
+                                '</div>' +
+                                '<i class="layui-icon img_del">&#xe640;</i>' +
+                                '</div>' +
+                                '</li>');
+                        }
+                        next(imgList.join(''), page < (data.length / imgNums));
+                        form.render();
+                    }, 500);
+                });
+            }
+        });
+
+         //设置图片的高度
+        $(window).resize(function () {
+            $("#Images li img").height($("#Images li img").width());
+        })
+
+
+        //删除单张图片
+        $("body").on("click", ".img_del", function (obj) {
+            var data = obj.data;
+            var _this = $(this);
+            layer.confirm('确定删除图片"' + _this.siblings().find("input").attr("title") + '"吗？', {
+                icon: 3,
+                title: '提示信息'
+            }, function (index) {
+                _this.parents("li").hide(1000);
+                setTimeout(function () {
+                    _this.parents("li").remove();
+                }, 950);
+                layer.close(index);
+            });
+            $.ajax({
+                type: "DELETE",
+                url: "/gallery/"+ data.id ,
+                data: {"id": data.id},
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function(result) {
+                    if(result.code == 0) {
+                        layer.msg(result.message,{icon: 1});
+                    } else {
+                        layer.msg(result.message, {
+                            icon: 5
+                        });
+                    }
+                }
+            });
+
+
+        })
+
+           //全选
+        form.on('checkbox(selectAll)', function (data) {
+            var child = $("#Images li input[type='checkbox']");
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+        });
+
+        //通过判断是否全部选中来确定全选按钮是否选中
+        form.on("checkbox(choose)", function (data) {
+            var child = $(data.elem).parents('#Images').find('li input[type="checkbox"]');
+            var childChecked = $(data.elem).parents('#Images').find('li input[type="checkbox"]:checked');
+            if (childChecked.length == child.length) {
+                $(data.elem).parents('#Images').siblings("blockquote").find('input#selectAll').get(0).checked = true;
+            } else {
+                $(data.elem).parents('#Images').siblings("blockquote").find('input#selectAll').get(0).checked = false;
+            }
+            form.render('checkbox');
+        })
+
+           //批量删除
+        $(".batchDel").click(function () {
+            var $checkbox = $('#Images li input[type="checkbox"]');
+            var $checked = $('#Images li input[type="checkbox"]:checked');
+            if ($checkbox.is(":checked")) {
+                layer.confirm('确定删除选中的图片？', {icon: 3, title: '提示信息'}, function (index) {
+                    var index = layer.msg('删除中，请稍候', {icon: 16, time: false, shade: 0.8});
+                    setTimeout(function () {
+                       //删除数据
+                        $checked.each(function () {
+                            $(this).parents("li").hide(1000);
+                            setTimeout(function () {
+                                $(this).parents("li").remove();
+                            }, 950);
+                        })
+                        $('#Images li input[type="checkbox"],#selectAll').prop("checked", false);
+                        form.render();
+                        layer.close(index);
+                        layer.msg("删除成功");
+                    }, 2000);
+                })
+            } else {
+                layer.msg("请选择需要删除的图片");
+            }
+        })
+
+    })
+</script>
+</body>
+</html>

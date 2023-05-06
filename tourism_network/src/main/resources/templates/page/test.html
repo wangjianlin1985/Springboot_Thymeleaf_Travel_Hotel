@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" th>
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script th:src="@{http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js}"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script th:src="@{http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js}"></script>
+    <script th:src="@{/static/js2/page.js}"></script>
+</head>
+<body>
+
+<!-- 模态框（Modal） -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">开始演示模态框</button>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+            </div>
+            <div class="modal-body">在这里添加一些文本</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<body>
+<div class="container">
+    <p>分页</p>
+    <ul id="page"></ul>
+</div>
+</body>
+<script>
+    $(function() {
+        var currentPage = 1;
+        var totalPages = 2;
+        $("#page").bootstrapPaginator({
+            bootstrapMajorVersion: 3, //对应的bootstrap版本
+            currentPage: currentPage, //当前页数
+            numberOfPages: 10, //每次显示页数
+            totalPages: totalPages, //总页数
+            shouldShowPage: true, //是否显示该按钮
+            useBootstrapTooltip: true,
+            onPageClicked: function(event, originalEvent, type, page) {
+
+            }
+        });
+    });
+</script>
+</body>
+</html>

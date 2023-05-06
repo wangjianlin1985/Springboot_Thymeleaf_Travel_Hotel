@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>旅行推荐</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    　　<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../../static/js2/page.js"></script>
+</head>
+<body>
+
+<!-- head 头部 -->
+<div id="head" th:include="common/index_header :: copyheader"></div>
+
+<!--图片-->
+<div id="travel_wrapper"></div>
+
+<!--面包导航-->
+<div class="breadcrumbs1_wrapper">
+    <div class="container">
+        <div class="breadcrumbs1"><a href="/dist/view">首页</a><span>/</span>景点
+        </div>
+    </div>
+</div>
+
+<!--搜索框-->
+<div class="container">
+      <div class="tabs_wrapper tabs1_wrapper">
+          <div class="tabs tabs1">
+              <div class="tabs_content tabs1_content">
+                 <div id="tabs-1">
+                     <form th:action="@{/travel/search_attrs}" id="uploadForm" name="uploadForm" class="form1" method="POST">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <div class="form-group">
+                                        <label>请输入景点名称</label>
+                                        <input class="form-control" placeholder="请输入景点名称" name="search_key"/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 col-md-2">
+                                    <div class="button1_wrapper">
+                                        <button type="submit" class="btn-default btn-form1-submit">查询</button>
+                                    </div>
+                                </div>
+                            </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+     </div>
+</div>
+
+<div id="content">
+    <div class="container">
+        <div class="tabs_wrapper tabs1_wrapper">
+            <div class="tabs tabs2">
+                <div class="tabs_content tabs1_content">
+                    <div id="tabs-2">
+                      <!--排序方式、中间内容、分页-->
+                      <div class="col-sm-9" style="width: 100%">
+                                <form action="javascript:;" class="form3 clearfix">
+                                    <div class="select1_wrapper txt">
+                                        <label>排序方式:</label>
+                                    </div>
+                                    <div class="select1_wrapper sel">
+                                        <div class="select1_inner">
+                                            <select class="select2 select" id="price" style="width: 100%" th:onchange="'javascript:test();'">
+                                                <option value="1">价钱</option>
+                                                <option value="2">由高到低</option>
+                                                <option value="3">由低到高</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="select1_wrapper sel">
+                                        <div class="select1_inner">
+                                            <select class="select2 select" id="star" style="width: 100%" th:onchange="'javascript:test();'">
+                                                <option value="1">评分</option>
+                                                <option value="2">由高到低</a></option>
+                                                <option value="3">由低到高</a></option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                                <!--中间数据-->
+                          <div  class="row" id="table_refresh" th:fragment="table_refresh">
+                              <div>
+                                  <div class="col-sm-4" th:each="attr : ${attrs}">
+                                      <div class="thumb6">
+                                          <div class="thumbnail clearfix">
+                                              <figure>
+                                                  <img th:src="@{${attr.img}}" class="img-responsive2">
+                                                  <div class="over">
+                                                      <div class="v1" th:text="${attr.name}"></div>
+                                                      <span style="color: yellow" th:size="10px" th:text="${attr.startdate}"></span>
+                                                      <div class="v2"   th:text="${attr.miaoshu}"><span ></span></div>
+                                                  </div>
+                                              </figure>
+                                              <div class="caption">
+                                                  <div class="txt1" th:text="${attr.name}"></div>
+                                                  <div class="txt3 clearfix">
+                                                      <div class="left_side">
+                                                          <div class="price" >$<span th:text="${attr.price}"></span></div>
+                                                          <div class="nums">per/Day</div>
+                                                      </div>
+                                                      <div class="right_side"><a th:href="@{'/travel/oneAttr?id='+${attr.id}}" class="btn-default btn1">详情</a>
+                                                      <!--<div class="right_side"><a href="product" class="btn-default btn1">Details</a>-->
+
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <br>
+                                  <!--分页-->
+                              </div>
+                          </div>
+                          <div class="pager_wrapper">
+                              <ul class="pager clearfix" id="pages">
+                                  <li class="prev"><a th:if="${not first}" th:href="@{/dist/travel(start=${number -1})}">Previous</a></li>
+                                  <li class="next"><a th:if="${not last}" th:href="@{/dist/travel(start=${number+1})}">Next</a></li>
+
+                              </ul>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+    </div>
+        </div>
+    </div>
+</div>
+
+<!--底部-->
+<div th:include="common/index_footer :: copyfooter"></div>
+
+
+
+</body>
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+<script th:inline="javascript">
+ /*   $(function () {
+        $('#table_refresh').load("/travel/page_attrs");
+    })*/
+    var pageNumber=[[${number}]];
+    var first=[[${first}]];
+    var last=[[${last}]];
+    var totalPages=[[${totalPages}]]
+    var html='<li class="active"><a th:if="${not first}" th:href="@{/dist/travel(start=${number-1})}">Previous</a>&nbsp;&nbsp;';
+
+    var bo="";
+     /*<![CDATA[*/
+        /*for (var i=2;i<=totalPages;i++){
+           // bo+='<li class="li"><a href="" onclick="page(i)">'+i+'</a>&nbsp;&nbsp;';
+        }*/
+     /*]]>*/
+    html=html+bo+'<li class="next"><li class="active"><a th:if="${not last}" th:href="@{/dist/travel(start=${number+1})}">Next</a>&nbsp;&nbsp;'
+
+
+     $(function() {
+         var currentPage = 1;
+         var totalPages = 2;
+         $("#page").bootstrapPaginator({
+             bootstrapMajorVersion: 3, //对应的bootstrap版本
+             currentPage: currentPage, //当前页数
+             numberOfPages: 10, //每次显示页数
+             totalPages: totalPages, //总页数
+             shouldShowPage: true, //是否显示该按钮
+             useBootstrapTooltip: true,
+             onPageClicked: function(event, originalEvent, type, page) {
+                 console.log(page);
+             }
+         });
+     });
+    
+    
+    $(function () {
+        var price=[[${price}]]
+        var star=[[${star}]]
+        console.log(price+"=-=-="+star)
+        if(price==3){
+            $("#price").find("option:contains('由低到高')").attr("selectd",true)
+
+        }else if (price==2){
+            $("#price").find("option:contains('由高到低')").attr("selectd",true)
+
+        }
+    })
+    
+    
+    
+    function test() {
+        var price1=[[${price}]]
+        var star1=[[${star}]]
+        var star=$("#star").val()
+        var price=$("#price").val()
+        console.log(price1+"======="+star1)
+        window.location.href="/dist/travel?star="+star+'&price='+price;
+    }
+</script>
+
+</html>

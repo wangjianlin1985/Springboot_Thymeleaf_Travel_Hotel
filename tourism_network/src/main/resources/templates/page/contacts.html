@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>联系我们</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your description">
+    <meta name="keywords" content="Your keywords">
+    <meta name="author" content="Your name">
+    <script type="text/javascript" src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="not-front page-contacts">
+
+<div id="main">
+
+
+    <!-- head 头部 -->
+    <div id="head" th:include="common/index_header :: copyheader"></div>
+
+    <div id="google_map2_wrapper" align="center">
+        <div style="width:100%;height:300px;border:#ccc solid 1px;" id="dituContent"></div>
+    </div>
+
+    <div class="breadcrumbs1_wrapper">
+        <div class="container">
+            <div class="breadcrumbs1"><a href="view">首页</a><span>/</span>联系我们</div>
+        </div>
+    </div>
+
+
+    <div id="content">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <h3>CONTACT INFO</h3>
+
+                    <p>
+                        Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel
+                        illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui
+                        blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber
+                        tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat
+                        facer possim assum
+                    </p>
+
+                    <br>
+
+                    <h4>地址：</h4>
+                    <p>
+                        795 Fake Ave, Door 6<br>
+                        Wonderland, CA 94107, USA<br>
+                        <a href="#">info@yourdomain.com</a>
+                    </p>
+
+                    <h4>电话：</h4>
+
+                    <p>
+                        +440 875369208<br>
+                        +440 353363114
+                    </p>
+
+                    <div class="social3_wrapper">
+                        <ul class="social3 clearfix">
+                            <li><a href="#"><i class="fa fa-facebook-square"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                            <li><a href="#"><i class="fa fa-vimeo-square"></i></a></li>
+                        </ul>
+                    </div>
+
+
+                </div>
+                <div class="col-sm-6">
+
+                    <h3>CONTACT FORM</h3>
+
+                    <div id="note"></div>
+                    <div id="fields">
+                        <form id="ajax-contact-form" class="form-horizontal" action="javascript:alert('success!');">
+
+                            <div class="form-group">
+                                <label for="inputName">Your Name</label>
+                                <input type="text" class="form-control" id="inputName" name="name" value="Full Name"
+                                       onBlur="if(this.value=='') this.value='Full Name'"
+                                       onFocus="if(this.value =='Full Name' ) this.value=''">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputEmail">Email</label>
+                                <input type="text" class="form-control" id="inputEmail" name="email"
+                                       value="邮箱" onBlur="if(this.value=='') this.value='E-mail address'"
+                                       onFocus="if(this.value =='E-mail address' ) this.value=''">
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="inputMessage">Your Message</label>
+                                        <textarea class="form-control" rows="7" id="inputMessage" name="content"
+                                                  onBlur="if(this.value=='') this.value='Message'"
+                                                  onFocus="if(this.value =='Message' ) this.value=''">信息</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" onclick="test()" class="btn-default btn-cf-submit">发送
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--底部-->
+    <div th:include="common/index_footer :: copyfooter"></div>
+
+</div>
+<script src="../../static/js/bootstrap.min.js"></script>
+</body>
+
+
+<script type="text/javascript" th:inline="javascript">
+    //创建和初始化地图函数：
+    function initMap() {
+        createMap();//创建地图
+        setMapEvent();//设置地图事件
+        addMapControl();//向地图添加控件
+    }
+
+    //创建地图函数：
+    function createMap() {
+        var map = new BMap.Map("dituContent");//在百度地图容器中创建一个地图
+        var point = new BMap.Point(116.395645, 39.929986);//定义一个中心点坐标
+        map.centerAndZoom(point, 12);//设定地图的中心点和坐标并将地图显示在地图容器中
+        window.map = map;//将map变量存储在全局
+    }
+
+    //地图事件设置函数：
+    function setMapEvent() {
+        map.enableDragging();//启用地图拖拽事件，默认启用(可不写)
+        map.enableScrollWheelZoom();//启用地图滚轮放大缩小
+        map.enableDoubleClickZoom();//启用鼠标双击放大，默认启用(可不写)
+        map.enableKeyboard();//启用键盘上下左右键移动地图
+    }
+
+    //地图控件添加函数：
+    function addMapControl() {
+        //向地图中添加缩放控件
+        var ctrl_nav = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE});
+        map.addControl(ctrl_nav);
+        //向地图中添加缩略图控件
+        var ctrl_ove = new BMap.OverviewMapControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, isOpen: 1});
+        map.addControl(ctrl_ove);
+        //向地图中添加比例尺控件
+        var ctrl_sca = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});
+        map.addControl(ctrl_sca);
+    }
+
+
+    initMap();//创建和初始化地图
+
+
+</script>
+
+<script>
+    function test() {
+        swal("SUCCESS", "You clicked the button!", "success");
+    }
+</script>
+</html>

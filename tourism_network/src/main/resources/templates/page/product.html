@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>景点详情</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Your description"/>
+    <meta name="keywords" content="Your keywords"/>
+    <meta name="author" content="Your name"/>
+    <!-- CSS Style -->
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+    　<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    <script  type="text/javascript" th:inline="javascript">
+
+        var id=[[${oneAttr.id}]];
+        $(function () {
+            $('#table_refresh').load("/travel/local?id="+id);
+            //alert(id)
+        })
+        function pay(){
+            var qty = document.getElementById("qty").value;
+            var data = JSON.stringify({id:id,qty:qty})
+            $.ajax({
+                type: "POST",
+                url: "/orders",
+                contentType: "application/json; charset=utf-8",
+                data: data,
+                dataType: "json",
+                success: function(result){
+                    if (result.code==0){
+                        swal("下单成功", "You clicked the button!", "success");
+
+                    }else if (result.code== 203){
+                        swal("权限不足","请先登录，亲")
+                        //top.location='/dist/login'
+                    }else if (result.code== 201){
+                        swal("库存不足", "You clicked the button!", "error");
+                    }else {
+                        swal("系统故障", "程序出错....");
+                    }
+
+                }
+            });
+        }
+    </script>
+
+</head>
+
+<body class="single-product-page">
+
+
+<!-- head 头部 -->
+<div id="head" th:include="common/index_header :: copyheader"></div>
+<br>
+<!-- Main Container -->
+<section class="main-container col1-layout">
+    <div class="main">
+        <div class="container">
+            <div class="row">
+                <div class="col-main">
+                    <div class="product-view">
+                        <div class="product-essential">
+                            <form action="#" method="post" id="product">
+                                <div class="product-img-box col-lg-5 col-sm-6 col-xs-12">
+                                    <div class="new-label new-top-left"> New </div>
+                                    <div class="product-image">
+                                        <div class="product-full"> <img id="product-zoom" th:src="@{${oneAttr.img}}" src="images/products/img02.jpg" data-zoom-image="images/products/img02.jpg" alt="product-image"> </div>
+                                        <!--<div class="more-views">-->
+                                            <!--<div class="slider-items-products">-->
+                                                <!--<div id="gallery_01" class="product-flexslider hidden-buttons product-img-thumb">-->
+                                                    <!--<div class="slider-items slider-width-col4 block-content">-->
+                                                        <!--<div class="more-views-items"> <img id="product-zoom" th:src="@{${oneAttr.img}}" src="images/products/img02.jpg" alt="product-image"></div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    </div>
+                                    <!-- end: more-images -->
+                                </div>
+                                <div class="product-shop col-lg-7 col-sm-6 col-xs-12">
+                                    <div class="product-name">
+                                        <h1 th:text="${oneAttr.name}"></h1>
+                                    </div>
+                                    <div class="rating"> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star-o"></i>
+                                        <p class="rating-links"> <a href="#">4 Review(s)</a> <span class="separator">|</span> <a href="#"><i class="fa fa-pencil"></i> write a review</a> </p>
+                                    </div>
+                                    <div class="price-block">
+                                        <div class="price-box">
+                                            <p class="special-price"> <span class="price-label">Special Price</span> <span id="product-price-48" class="price"> $<span th:text="${oneAttr.price}"></span> </span> </p>
+                                            <p class="old-price"> <span class="price-label">Regular Price:</span> <span class="price"> $499.99 </span> </p>
+                                        </div>
+                                    </div>
+                                    <div class="info-orther">
+                                        <p>景点Id: <span id="id" name="id" th:text="${oneAttr.id}"></span></p>
+                                        <p>剩余票数: <span class="in-stock" th:text="${oneAttr.stock}"></span></p>
+                                    </div>
+
+                                    <div class="short-description">
+                                        <h2>景点概述</h2>
+                                        <p th:text="${oneAttr.miaoshu}"></p>
+                                    </div>
+                                    <div class="form-option">
+                                        <div class="add-to-box">
+                                            <div class="add-to-cart">
+                                                <div class="pull-left">
+                                                    <div class="custom pull-left">
+                                                        <label>Qty :</label>
+                                                        <button onClick="var result = document.getElementById('qty'); var qty = result.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) result.value--;return false;" class="reduced items-count" type="button"><i class="fa fa-minus">&nbsp;</i></button>
+                                                        <input type="text"  class="input-text qty" title="Qty" value="1" maxlength="12" id="qty" name="qty">
+                                                        <button onClick="var result = document.getElementById('qty'); var qty = result.value; if( !isNaN( qty )) result.value++;return false;" class="increase items-count" type="button"><i class="fa fa-plus">&nbsp;</i></button>
+                                                    </div>
+                                                </div>
+                                                <button onClick="pay();" name="btn" class="button btn-cart" title="Add to Cart" type="button">立即下单</span></button>
+                                            </div>
+                                            <!--<div class="email-addto-box">-->
+                                                <!--<ul class="add-to-links">-->
+                                                    <!--<li> <a class="link-wishlist" href="#"><span>Add to Wishlist</span></a></li>-->
+                                                    <!--<li><span class="separator">|</span> <a class="link-compare" href="#"><span>Add to Compare</span></a></li>-->
+                                                <!--</ul>-->
+                                            <!--</div>-->
+                                        </div>
+                                    </div>
+                                    <div class="form-share">
+                                        <div class="sendtofriend-print"> <a href="javascript:print();"><i class="fa fa-print"></i> Print</a> <a href="#"><i class="fa fa-envelope-o fa-fw"></i> Send to a friend</a> </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-collateral col-lg-12 col-sm-12 col-xs-12">
+                    <div class="add_info">
+                        <ul id="product-detail-tab" class="nav nav-tabs product-tabs">
+                            <li class="active"> <a href="#product_tabs_description" data-toggle="tab"> Product Description </a> </li>
+                        </ul>
+                        <div id="productTabContent" class="tab-content">
+                            <div class="tab-pane fade in active" id="product_tabs_description">
+                                <div class="std">
+                                    <p th:text="${oneAttr.comment}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Main Container End -->
+
+<div id="popular_cruises1">
+    <div class="container">
+
+        <h2 class="animated" th:if="${scenics}==null">Hotel Recommendation</h2>
+
+        <br><br>
+
+        <div id="popular_wrapper" class="animated" data-animation="fadeIn" data-animation-delay="300" >
+            <div id="popular_inner">
+                <div class="" >
+                    <div id="popular">
+                        <div class="" >
+                            <div class="carousel-box">
+                                <div class="inner">
+                                    <div class="carousel main" th:fragment="table_refresh" id="table_refresh">
+                                        <ul style="margin-left: 100px">
+                                            <li th:each="scenic:${scenics}">
+                                                <div class="popular">
+                                                    <div class="popular_inner">
+                                                        <figure>
+                                                            <img th:src="@{${scenic.img}}"  alt=""
+                                                                 class="img-responsive"/>
+                                                            <div class="over">
+                                                                <div class="v1">Mediterranean
+                                                                    <span>17 Deal Offers</span></div>
+                                                                <div class="v2">Lorem ipsum dolor sit amet, concateus.
+                                                                </div>
+                                                            </div>
+                                                        </figure>
+                                                        <div class="caption">
+                                                            <div class="txt1"><span th:text="${scenic.name}"></span>
+                                                            </div><span th:text="${scenic.price}"></span>
+                                                            <div class="txt2" th:text="${scenic.miaoshu}">
+                                                            </div>
+                                                            <div class="txt3 clearfix">
+                                                                <div class="left_side">
+                                                                    <div class="stars1">
+                                                                        <img th:src="@{/images/star1.png}"
+                                                                             src="images/star1.png" alt="">
+                                                                        <img th:src="@{/images/star1.png}"
+                                                                             src="images/star1.png" alt="">
+                                                                    </div>
+                                                                    <div class="nums">- 168 Reviews</div>
+                                                                </div>
+                                                                <div class="right_side"><a th:href="@{'/hotel/oneAttr?id='+${scenic.id}}" class="btn-default btn1">Detail</a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--底部-->
+<div th:include="common/index_footer :: copyfooter"></div>
+
+
+<script th:src="@{/js2/owl.carousel.min.js}"></script>
+<script th:src="@{/js2/main.js}"></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的订单</title>
+    <script src="../../static/js2/jquery.min.js" th:src="@{/js2/jquery.min.js}"></script>
+    <link th:href="@{http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css}" rel="stylesheet" />
+    <link href="../../static/css2/bootstrap-table.min.css" th:href="@{/css2/bootstrap-table.min.css}">
+    <script src="../../static/js2/bootstrap.min.js" th:src="@{/js2/bootstrap.min.js}"></script>
+    <script src="../../static/js2/bootstrap-table.min.js" th:src="@{/js2/bootstrap-table.min.js}"></script>
+    <script src="../../static/js2/bootstrap-table-zh-CN.min.js" th:src="@{/js2/bootstrap-table-zh-CN.min.js}"></script>
+
+    <style>
+
+        ul{
+            list-style-type: none;
+        }
+        li{
+            float: left;
+            margin-left: 15px;
+            font-size: 50px;
+            font-family: "simsun";
+            cursor: pointer;
+        }
+        div{
+            clear: both;
+        }
+        button{
+            margin-left: 70px;
+            font-size:30px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <div class="col-md-12">
+        <table id="fileList" class="table table-bordered table-hover">
+        </table>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">请给我们的服务打分：</h4>
+                </div>
+                <div class="modal-body"><ul class="box">
+                    <li>☆</li>
+                    <li>☆</li>
+                    <li>☆</li>
+                    <li>☆</li>
+                    <li>☆</li>
+                </ul></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" id="submit" class="btn btn-primary">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+<div>
+
+</div>
+
+<script>
+        $(function () {
+
+            $('#fileList').bootstrapTable({
+                //url: "http://192.168.25.167:8080/admin/getstuList",           //请求后台的URL（*）
+                //url: '../../../static/json/stuList.json',
+                url: "/orders/allorders",
+                method: 'POST',                      //请求方式（*）
+                //toolbar: '#toolbar',              //工具按钮用哪个容器
+                striped: false,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                     //是否启用排序
+                sortOrder: "asc",                   //排序方式
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+                pageSize: 5,                        //每页的记录行数（*）
+                pageList: [5, 10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: true,                      //是否显示表格搜索
+                strictSearch: true,
+                showColumns: false,                  //是否显示所有的列（选择显示的列）
+                showRefresh: false,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                //height: 500,                      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                   //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                  //是否显示父子表
+                //得到查询的参数
+
+                queryParams: function (params) {
+                    //这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
+                    var temp = {
+                        rows: params.limit,                         //页面大小
+                        page: (params.offset / params.limit) + 1,   //页码
+                        sort: params.sort,      //排序列名
+                        sortOrder: params.order //排位命令（desc，asc）
+                    };
+                    return temp;
+                },
+                columns: [{
+                    field: 'id',
+                    title: '序号',
+                    align: 'center',
+                }, {
+                    field: 'scenicname',
+                    title: '景点名称',
+                    align: 'center'
+                }, {
+                    field: 'username',
+                    title: '姓名',
+                    align: 'center'
+                }, {
+                    field: 'phone',
+                    title: '手机',
+                    align: 'center'
+                }, {
+                    field: 'qty',
+                    title: '票数',
+                    align: 'center'
+                }, {
+                    field: 'payment',
+                    title: '总价',
+                    align: 'center'
+                }, {
+                    field: 'paytime',
+                    title: '下单时间',
+                    align: 'center'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "已发货"
+                        } else {
+                            return "已下单"
+                        }
+                    }
+                }, {
+                    field: 'scenicid',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        //return value;
+                        return '<a data-toggle="modal" data-target="#myModal" onclick="opinions('+value+')" href="#">'+value+'</a>'
+
+                        /*var id = value
+                        var status = row.status;
+                        if (status == 1) {
+                            return '<a data-toggle="modal" data-target="#myModal" onclick="opinions('+id+')" href="">评价</a>'
+                        } else {
+                            return '<a class="judge" style="pointer-events: none;">评价</a>'
+                        }*/
+                    }
+                }],
+                pagination: true
+            });
+        })
+
+
+
+
+        function opinions(id){
+
+            //        设置两个状态的星星
+            var emptyStar="☆";
+            var fullStar="★";
+//        li鼠标移入事件
+            $("li").mouseenter(function(){
+                $(this).text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+            });
+//        li鼠标离开事件
+            $("li").mouseleave(function(){
+                $("li").text(emptyStar);
+                $("li.current").text(fullStar).prevAll().text(fullStar).end().nextAll().text(emptyStar);
+
+            });
+//        li点击事件
+            $("li").click(function(){
+                if($(this).hasClass("current")){
+                    $(this).removeAttr("class");
+                }else{
+                    $(this).attr("class","current").siblings().removeAttr("class");
+                }
+            })
+//        button点击事件
+            $("#submit").click(function(){
+                var boo=false;
+                for(var i=0;i<$("ul>li").length;i++){
+                    if($("ul>li").hasClass("current")){
+                        boo=true;
+                    }
+                }
+                if(boo){
+                    var star=($("ul>li.current").index()+1)
+                    console.log("id"+id+"star"+star)
+                    var data = JSON.stringify({id:id,start:star})
+                    $.ajax({
+                        contentType: "application/json; charset=utf-8",
+                        type:"POST",
+                        url:"/travel/star?id="+id+"&start="+star,
+                        data:data,
+                        dataType:"JSON",
+                        success:function (data) {
+                            if (data.code==1){
+                                alert("感谢评分！")
+                                $("#myModal").modal('hide');
+                            }
+                        },error:function () {
+                            alert("失败！")
+                        }
+                    })
+                }else{
+                    return alert("您还没有选择呢！");
+                }
+            })
+
+        }
+
+
+</script>
+
+
+</body>
+</html>
